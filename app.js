@@ -7,6 +7,7 @@ require("babel-polyfill");
 const Koa = require('koa');
 const app = new Koa();
 const router = require("koa-router")();
+const hashCodeCyp = require("./token");
 
 function getUrlParam (url, name) {
     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, "i"),
@@ -27,11 +28,19 @@ router.get("/app", function *(next){
     const timestamp = getUrlParam(this.request.url, "timestamp");
     const nonce = getUrlParam(this.request.url, "nonce");
     const echostr = getUrlParam(this.request.url, "echostr");
+    const token = "Lever";
 
     console.log("signature:", signature);
     console.log("timestamp:", timestamp);
     console.log("nonce:", nonce);
     console.log("echostr:", echostr);
+
+    if (signature && timestamp && nonce && echostr) {
+        const hashCode = hashCodeCyp(token, timestamp, nonce);
+        if (hashCode === signature) {
+            // 返回echostr
+        }
+    }
 });
 app.use(router.routes());
 app.use(router.allowedMethods());
