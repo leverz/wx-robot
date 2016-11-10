@@ -7,7 +7,8 @@ require("babel-polyfill");
 const Koa = require('koa');
 const app = new Koa();
 const router = require("koa-router")();
-const hashCodeCyp = require("./token");
+const hashCodeCyp = require("./weChat/token");
+const config = require("./weChat/config");
 
 router.get("/app", function *(next){
     yield next;
@@ -15,7 +16,7 @@ router.get("/app", function *(next){
     const timestamp = this.query.timestamp;
     const nonce = this.query.nonce;
     const echostr = this.query.echostr;
-    const token = "Lever";
+    const token = config.token;
 
     console.log("signature:", signature);
     console.log("timestamp:", timestamp);
