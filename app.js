@@ -9,25 +9,12 @@ const app = new Koa();
 const router = require("koa-router")();
 const hashCodeCyp = require("./token");
 
-function getUrlParam (url, name) {
-    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, "i"),
-        stringStart = url.indexOf("?") + 1;
-    const r = url.substr(stringStart).match(reg);
-    if (r !== null) {
-        const valueIndex = 2;
-
-        return decodeURIComponent(r[valueIndex]);
-    }
-
-    return null;
-};
-
 router.get("/app", function *(next){
-    this.body = "Hello world!";
-    const signature = getUrlParam(this.request.url, "signature");
-    const timestamp = getUrlParam(this.request.url, "timestamp");
-    const nonce = getUrlParam(this.request.url, "nonce");
-    const echostr = getUrlParam(this.request.url, "echostr");
+    yield next;
+    const signature = this.query.signature;
+    const timestamp = this.query.timestamp;
+    const nonce = this.query.nonce;
+    const echostr = this.query.echostr;
     const token = "Lever";
 
     console.log("signature:", signature);
@@ -39,20 +26,19 @@ router.get("/app", function *(next){
         const hashCode = hashCodeCyp(token, timestamp, nonce);
         if (hashCode === signature) {
             // 返回echostr
+            this.body = echostr;
         }
     }
 });
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-app.use(async (ctx, next) => {
+app.use(function* (next){
     const start = new Date();
-    await next();
+    yield next;
     const ms = new Date() - start;
-    console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+    console.log(`${this.method} ${this.url} - ${ms}ms`);
 });
-
-app.use(ctx => ctx.body = "Hello Koa in app-async.js");
 
 app.listen(3000);
 
