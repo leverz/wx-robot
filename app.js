@@ -9,7 +9,25 @@ const app = new Koa();
 const router = require("koa-router")();
 const hashCodeCyp = require("./weChat/token");
 const config = require("./weChat/config");
+const xmlParser = require("koa-xml-body").default;
 
+app.use(xmlParser());
+
+router.post("/", (req, res) => {
+    res.writeHead(200, {
+        "Content-Type": "application/xml"
+    });
+
+    const data = req.body.xml;
+    const resMsg = `<xml>
+<ToUserName><![CDATA[${data.fromusername}]]></ToUserName>
+<FromUserName><![CDATA[${data.tousername}]]></FromUserName>
+<CreateTime>${parseInt(new Date().valueOf() / 1000)}</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[${data.content}]]></Content>
+</xml>`;
+    res.end(resMsg);
+});
 router.get("/app", function *(next){
     yield next;
     const signature = this.query.signature;
@@ -31,6 +49,7 @@ router.get("/app", function *(next){
         }
     }
 });
+
 app.use(router.routes());
 app.use(router.allowedMethods());
 
