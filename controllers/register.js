@@ -50,7 +50,7 @@ const checkReg = data => {
     }
 }
 
-const quit = data => data.Content[0] === "d" || data.Content[1] === "D" && setUserState(data.ToUserName[0], "null")
+const quit = data => (data.Content[0] === "d" || data.Content[1] === "D") && setUserState(data.ToUserName[0], "null")
 
 const checkWechatId = data => {
     if (data.Content[0] === "a" || data.Content[0] === "A") {
@@ -122,7 +122,7 @@ const register = (data, rData) => {
             return changeUserName(data)
         case "4":
             return checkUserInfo(data, rData)
-        case "6":
+        case "5":
             return changeUserInfo(data, rData)
         default:
             return checkReg(data)
