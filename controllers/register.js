@@ -71,6 +71,8 @@ const checkUserName = data => {
 const changeUserName = data => {
     setUserName(data.ToUserName[0], data.Content[0])
     setUserState(data.ToUserName[0], "4")
+
+    return `您的昵称为${data.Content[0]}, 输入c进入下一步`
 };
 
 const register = (data, rData) => {
@@ -83,7 +85,9 @@ const register = (data, rData) => {
         case "2":
             return checkUserName(data)
         case "3":
-            return changeUserName(data)    
+            return changeUserName(data)
+        case "4":
+            return checkUserName    
         default:
             return checkReg(data)
     }
