@@ -1,3 +1,3 @@
 const client = require("./redis");
 
-module.exports = (userId, wechatId) => client.hmsetAsync(userId, {"wechat": wechatId});
+module.exports = (userId, wechatId) => client.hmset(userId, {"wechat": wechatId});

@@ -1,5 +1,7 @@
 const setUserState = require("../model/setUserState")
 
+const setUserWeChat = require("../model/setUserWeChat")
+
 const registerString = `欢迎进入注册流程：
 
 请根据下列步骤进行注册
@@ -15,8 +17,9 @@ d 退出注册流程
 /**
  * 0 - 回复注册，还没有进行后续操作
  * 1 - 回复a，还没有进行后续操作
- * 2 - 回复b，还没有进行后续操作
- * 3 - 回复c，还没有进行后续操作
+ * 2 - 微信号输入完毕
+ * 3 - 回复b，还没有进行后续操作
+ * 4 - 回复c，还没有进行后续操作
  * null - 没有在注册流程中
  * 
  * 检查用户是否注册
@@ -26,7 +29,7 @@ d 退出注册流程
  */
 const checkReg = data => {
     if (/注册/.test(data.Content[0])) {
-        await setUserState(data.ToUserName[0], "0")
+        setUserState(data.ToUserName[0], "0")
         return registerString
     } else {
         return "暂不支持未注册用户，回复【注册】进入注册流程"
@@ -45,8 +48,25 @@ const checkWechatId = data => {
 const changeWechatId = data => {
     const testWechatId = /^[a-zA-Z][a-zA-Z0-9_-]{5,19}/g
     if (testWechatId.test(data.Content[0])) {
-        
+        setUserWeChat(data.ToUserName[0], data.Content[0])
+        setUserState(data.ToUserName[0], "2")
+        return `您的微信号为${data.Content[0]}, 输入b进入下一步`
     }
+
+    return "请输入正确的微信号"
+}
+
+const checkUserName = data => {
+    if (data.Content[0] === "b" || data.Content[0] === "B") {
+        setUserState(data.ToUserName[0], "3")
+        return "请输入您的昵称"
+    }
+
+    return "输入b进入下一步"
+}
+
+const changeUserName = data => {
+    
 }
 
 const register = (data, rData) => {
@@ -56,7 +76,13 @@ const register = (data, rData) => {
             return checkWechatId(data)
         case "1":
             return changeWechatId(data)
+        case "2":
+            return checkUserName(data)
+        case "3":
+            return changeUserName(data)    
+        default:
+            return checkReg(data)
     }
 }
 
-module.exports = checkReg;
+module.exports = register;
