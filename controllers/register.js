@@ -21,7 +21,8 @@ d 退出注册流程
  * 1 - 回复a，还没有进行后续操作
  * 2 - 微信号输入完毕
  * 3 - 回复b，还没有进行后续操作
- * 4 - 回复c，还没有进行后续操作
+ * 4 - 用户名设置完毕
+ * 5 - 回复c，还没有进行后续操作
  * null - 没有在注册流程中
  * 
  * 检查用户是否注册
@@ -67,7 +68,10 @@ const checkUserName = data => {
     return "输入b进入下一步"
 }
 
-const changeUserName = data => setUserName(data.ToUserName[0], data.Content[0]);
+const changeUserName = data => {
+    setUserName(data.ToUserName[0], data.Content[0])
+    setUserState(data.ToUserName[0], "4")
+};
 
 const register = (data, rData) => {
     const userId = data.ToUserName[0]
