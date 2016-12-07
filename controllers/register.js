@@ -2,6 +2,8 @@ const setUserState = require("../model/setUserState")
 
 const setUserWeChat = require("../model/setUserWeChat")
 
+const setUserName = require("../model/setUserName")
+
 const registerString = `欢迎进入注册流程：
 
 请根据下列步骤进行注册
@@ -65,9 +67,7 @@ const checkUserName = data => {
     return "输入b进入下一步"
 }
 
-const changeUserName = data => {
-    
-}
+const changeUserName = data => setUserName(data.ToUserName[0], data.Content[0]);
 
 const register = (data, rData) => {
     const userId = data.ToUserName[0]
