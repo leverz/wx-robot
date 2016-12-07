@@ -6,4 +6,4 @@ const client = require("./redis")
  * @param  {String} status 所处状态
  * @return {Promise}        携带状态的Promise
  */
-module.exports = (userId, status) => client.hmset(userId, {"status": status})
+module.exports = (userId, status) => client.hmsetAsync(userId, {"status": status})

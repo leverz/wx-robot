@@ -24,7 +24,7 @@ d 退出注册流程
  * @param  {Object} rData   用户信息
  * @return {String}         公众号回复内容
  */
-const checkReg = (data) => {
+const checkReg = data => {
     if (/注册/.test(data.Content[0])) {
         await setUserState(data.ToUserName[0], "0")
         return registerString
@@ -33,7 +33,7 @@ const checkReg = (data) => {
     }
 }
 
-const checkWechatId = (data) => {
+const checkWechatId = data => {
     if (data.Content[0] === "a" || data.Content[0] === "A") {
         setUserState(data.ToUserName[0], "1")
         return "请输入您的微信ID"
@@ -42,13 +42,20 @@ const checkWechatId = (data) => {
     return registerString
 }
 
+const changeWechatId = data => {
+    const testWechatId = /^[a-zA-Z][a-zA-Z0-9_-]{5,19}/g
+    if (testWechatId.test(data.Content[0])) {
+        
+    }
+}
+
 const register = (data, rData) => {
     const userId = data.ToUserName[0]
     switch(rData.status){
         case "0":
             return checkWechatId(data)
         case "1":
-            return
+            return changeWechatId(data)
     }
 }
 
