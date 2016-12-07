@@ -4,6 +4,8 @@ const setUserWeChat = require("../model/setUserWeChat")
 
 const setUserName = require("../model/setUserName")
 
+const setUserReadyState = require("../model/setUserReadyState")
+
 const registerString = `欢迎进入注册流程：
 
 请根据下列步骤进行注册
@@ -16,6 +18,15 @@ c 查看并确认您输入的微信ID和昵称
 d 退出注册流程
 
 `
+const makeSure = rData => `您的微信号为${rData.wechat},您的昵称为${rData.name}
+
+输入Y确认
+
+输入N放弃
+
+之后可以回复a
+===========
+输入d退出注册流程`
 /**
  * 0 - 回复注册，还没有进行后续操作
  * 1 - 回复a，还没有进行后续操作
@@ -39,13 +50,15 @@ const checkReg = data => {
     }
 }
 
+const quit = data => data.Content[0] === "d" || data.Content[1] === "D" && setUserState(data.ToUserName[0], "null")
+
 const checkWechatId = data => {
     if (data.Content[0] === "a" || data.Content[0] === "A") {
         setUserState(data.ToUserName[0], "1")
         return "请输入您的微信ID"
     }
 
-    return registerString
+    return quit(data) || registerString
 }
 
 const changeWechatId = data => {
@@ -56,7 +69,7 @@ const changeWechatId = data => {
         return `您的微信号为${data.Content[0]}, 输入b进入下一步`
     }
 
-    return "请输入正确的微信号"
+    return quit(data) || "请输入正确的微信号"
 }
 
 const checkUserName = data => {
@@ -65,15 +78,36 @@ const checkUserName = data => {
         return "请输入您的昵称"
     }
 
-    return "输入b进入下一步"
+    return quit(data) || "输入b进入下一步"
 }
 
 const changeUserName = data => {
     setUserName(data.ToUserName[0], data.Content[0])
     setUserState(data.ToUserName[0], "4")
 
-    return `您的昵称为${data.Content[0]}, 输入c进入下一步`
+    return quit(data) || `您的昵称为${data.Content[0]}, 输入c进入下一步`
 };
+
+const checkUserInfo = (data, rData) => {
+    if (data.Content[0] === "c" || data.Content[0] === "C") {
+        setUserState(data.ToUserName[0], "5")
+        return makeSure(rData)
+    }
+
+    return quit(data) || "输入c进入下一步"
+}
+
+const changeUserInfo = (data, rData) => {
+    if (data.Content[0] === "y" || data.Content[0] === "Y") {
+        setUserReadyState(data.ToUserName[0], "true")
+        return "注册完成！"
+    } else if (data.Content[0] === "n" || data.Content[0] === "N") {
+        setUserState(data.ToUserName[0], "0")
+        return registerString
+    }
+
+    return quit(data) || makeSure(rData)
+}
 
 const register = (data, rData) => {
     const userId = data.ToUserName[0]
@@ -87,7 +121,9 @@ const register = (data, rData) => {
         case "3":
             return changeUserName(data)
         case "4":
-            return checkUserName    
+            return checkUserInfo(data, rData)
+        case "6":
+            return changeUserInfo(data, rData)
         default:
             return checkReg(data)
     }
