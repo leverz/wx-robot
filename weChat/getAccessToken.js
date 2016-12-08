@@ -14,7 +14,7 @@ module.exports = code => {
     }
     const options = {
         method: "GET",
-        url: reqUrl
+        url: `${reqUrl}?grant_type=client_credential&appid=${params.appid}&secret=${params.secret}`
     }
 
     return new Service(options)
