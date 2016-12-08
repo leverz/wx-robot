@@ -6,11 +6,12 @@ const register = require("./register")
 const feed = async (ctx, next) => {
     ctx.status = 200
     ctx.type = "application/xml"
+
     const data = ctx.request.body.xml
 
-    const rData = await getUser(data.ToUserName[0])
+    const rData = await getUser(data.FromUserName[0])
 
-    const content = (!!rData && rData.isReady) || register(data, rData)
+    const content = (!!rData && rData.isReady === "true") || register(data, rData)
 
     ctx.body = `<xml>
 <ToUserName><![CDATA[${data.FromUserName}]]></ToUserName>
