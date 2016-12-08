@@ -3,6 +3,7 @@
  */
 const getUser = require("../model/getUser")
 const register = require("./register")
+const question = require("./request")
 
 const feed = async (ctx, next) => {
     ctx.status = 200
@@ -15,7 +16,7 @@ const feed = async (ctx, next) => {
     let content = "";
 
     if (!!rData && rData.isReady === "true") {
-        content = "await wait(60000)"
+        content = question(data, rData.question)
     } else {
         content = register(data, rData)
     }
