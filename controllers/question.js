@@ -6,9 +6,22 @@ const qList = [
     "这个岗位跟过去有什么变化？",
     "未来可能是什么将这个行业颠覆？"
 ]
-const checkQuestion = (data, question) => {
-    if (question.length < 6) {
-        const qlen = question.length
-        return qList[qlen === 0 ? 0 : qlen - 1]
+const emptyLen = 0
+const firstElem = 0
+const stepSize = 1
+const checkQuestion = (data, question = []) => {
+    const quelen = question.length, qlen = qList.length
+    if (question[quelen - 1]) {
+        return false
     }
+    if (quelen === emptyLen) {
+        question.push(null)
+        return qList[quelen]    
+    }
+    question[qlen - 1] = data.Content[firstElem]
+    if (quelen === qlen) {
+        return "问题回答完毕"
+    }
+    question[quelen] = null
+    return qList[quelen]
 }
