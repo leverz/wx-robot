@@ -3,7 +3,7 @@
  */
 const getUser = require("../model/getUser")
 const register = require("./register")
-const question = require("./request")
+const question = require("./question")
 
 const feed = async (ctx, next) => {
     ctx.status = 200
@@ -16,7 +16,7 @@ const feed = async (ctx, next) => {
     let content = "";
 
     if (!!rData && rData.isReady === "true") {
-        content = question(data, rData.question)
+        content = question(data, JSON.parse(rData.question)) || "您有什么安排？"
     } else {
         content = register(data, rData)
     }

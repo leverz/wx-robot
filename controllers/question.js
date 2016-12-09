@@ -1,3 +1,4 @@
+const setQuestionList = require("../model/setQuestionList")
 const qList = [
     "你未来的目标是什么？", 
     "实现这些目标有什么痛点？（行业痛点、公司发展痛点、客户痛点）",
@@ -11,17 +12,22 @@ const firstElem = 0
 const stepSize = 1
 const checkQuestion = (data, question = []) => {
     const quelen = question.length, qlen = qList.length
-    if (question[quelen - 1]) {
+    if (question[qlen - 1]) {
         return false
     }
     if (quelen === emptyLen) {
         question.push(null)
+        setQuestionList(data.FromUserName[0], question)
         return qList[quelen]    
     }
-    question[qlen - 1] = data.Content[firstElem]
+    question[quelen - 1] = data.Content[firstElem]
+    setQuestionList(data.FromUserName[0], question)
     if (quelen === qlen) {
         return "问题回答完毕"
     }
     question[quelen] = null
+    setQuestionList(data.FromUserName[0], question)
     return qList[quelen]
 }
+
+module.exports = checkQuestion
